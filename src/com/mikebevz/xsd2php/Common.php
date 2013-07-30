@@ -111,7 +111,7 @@ class Common {
      */
     public function parseQName($qname, $resolveNamespace = false) {
         if (!preg_match('/:/', $qname)) {
-            throw new \RuntimeException("Given argument is not of QName type: ".$qname);    
+			return array('', $qname);
         } 
         
         list ($ns, $name) = explode(":", $qname);
