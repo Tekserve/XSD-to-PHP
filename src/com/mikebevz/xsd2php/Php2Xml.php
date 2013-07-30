@@ -74,10 +74,10 @@ class Php2Xml extends Common {
         foreach ($propDocs as $name => $data) {
             if (is_array($data['value'])) {
                 $elName = array_reverse(explode("\\",$name));
-                $code = $this->getNsCode($data['xmlNamespace']);
+                $code = @$data['xmlNamespace'] ? "{$this->getNsCode($data['xmlNamespace'])}:" : "";
                 foreach ($data['value'] as $arrEl) {
                     //@todo fix this workaroung. it's only works for one level array
-                    $dom = $this->dom->createElement($code.":".$elName[0]);
+                    $dom = $this->dom->createElement($code . $elName[0]);
                     $this->parseObjectValue($arrEl, $dom);
                     $this->root->appendChild($dom); 
                 }
@@ -212,21 +212,21 @@ class Php2Xml extends Common {
                 if ($prop->getValue($obj) != '') {
                     if ($propDocs['xmlType'] == 'element') {
                         $el = '';
-                        $code = $this->getNsCode($propDocs['xmlNamespace']);
+                        $code = @$propDocs['xmlNamespace'] ? "{$this->getNsCode($propDocs['xmlNamespace'])}:" : "";
                         $value = $prop->getValue($obj);
                         
                         if (is_array($value)) {
-                            $this->logger->debug("Creating element:".$code.":".$propDocs['xmlName']);
+                            $this->logger->debug("Creating element:".$code.$propDocs['xmlName']);
                             $this->logger->debug(print_r($value, true));
                             foreach ($value as $node) {
                                 $this->logger->debug(print_r($node, true));
-                                $el = $this->dom->createElement($code.":".$propDocs['xmlName']);
+                                $el = $this->dom->createElement($code.$propDocs['xmlName']);
                                 $arrNode = $this->parseObjectValue($node, $el);
                                 $element->appendChild($arrNode);
                             }
                             
                         } else {
-                            $el = $this->dom->createElement($code.":".$propDocs['xmlName'], $value);
+                            $el = $this->dom->createElement($code.$propDocs['xmlName'], $value);
                             $element->appendChild($el);
                         }
                         //print_r("Added element ".$propDocs['xmlName']." with NS = ".$propDocs['xmlNamespace']." \n");
