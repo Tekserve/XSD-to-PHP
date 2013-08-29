@@ -101,6 +101,8 @@ class Bind extends Common {
             }
             $docs = $this->parseDocComments($propertyDocs);
             $className = $docs['var'];
+			// Remove the array indicator from the className
+			$className = str_replace("[]", "", $className);
             
             
             if ($this->hasChild($child)) {
@@ -117,11 +119,9 @@ class Bind extends Common {
                     throw new \RuntimeException("Model ".get_class($model)." does not have property ".$name);
                 }
                 if (!class_exists($className)) {
-                    //print_r($className."\n");
                     $propertyDocs = $refl->getProperty($name)->getDocComment();
                     $docs = $this->parseDocComments($propertyDocs);
                     $type = $docs['xmlType'];
-                    print_r("Type: ". $type."\n");
                     if ($type == 'attribute') {
                         $model->{$name} = $child->nodeValue;      
                     } elseif ($type == 'element') {
@@ -133,7 +133,6 @@ class Bind extends Common {
                         throw new \RuntimeException('Class '.$className.' does not exist');
                     }
                 } else {
-                    //$name = $child->nodeName;
                     $cModel = new $className();
                     $cModel->value = $child->nodeValue;
                     $model->{$name} = $cModel;
